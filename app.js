@@ -2,8 +2,10 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const logger = require('morgan');
 const session = require('express-session');
+const flash = require('connect-flash');
 
 // connect to postgresql
 const { Pool } = require('pg')
@@ -15,7 +17,7 @@ const pool = new Pool({
   port: 5432,
 })
 
-const indexRouter = require('./routes/index');
+const indexRouter = require('./routes/index')(pool);
 const usersRouter = require('./routes/users')(pool);
 // const productsRouter = require('./routes/products')(pool);
 
@@ -29,10 +31,13 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: 'rubicamp',
 }))
+app.use(flash());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
