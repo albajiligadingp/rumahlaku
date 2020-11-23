@@ -26,7 +26,6 @@ module.exports = function (pool) {
   router.post('/signin', function (req, res, next) {
     pool.query('SELECT * FROM public.user WHERE email = $1', [req.body.email], (err, data) => {
       if (err) {
-        console.log(req.body.email);
         req.flash('info', "Try again later!");
         return res.redirect('/signin');
       }
@@ -48,9 +47,6 @@ module.exports = function (pool) {
           req.session.user = user;
           res.redirect('/');
         } else {
-          console.log('cek user gagal');
-          console.log(req.body.email);
-          console.log(req.body.password);
           req.flash('info', "Username or password doesn't exist!");
           return res.redirect('/signin');
         }
@@ -71,7 +67,6 @@ module.exports = function (pool) {
   });
 
   router.post('/register', function (req, res, next) {
-    console.log(req.body);
     if (req.body.password != req.body.repassword) {
       req.flash('info', "Pasword doesn't match!");
       return res.redirect('/register');
@@ -79,7 +74,6 @@ module.exports = function (pool) {
 
     pool.query('SELECT * FROM public.user WHERE email = $1', [req.body.email], (err, data) => {
       if (err) {
-        console.log(req.body.email);
         req.flash('info', "Fail to check user!");
         return res.redirect('/register');
       }
@@ -96,11 +90,6 @@ module.exports = function (pool) {
         }
         pool.query('INSERT INTO public.user (nama, email, password, nohandphone) VALUES ($1, $2, $3, $4)', [req.body.nama, req.body.email, hash, req.body.nohandphone], (err, data) => {
           if (err) {
-            console.log('insert into gagal');
-            console.log(req.body.nama);
-            console.log(req.body.email);
-            console.log(hash);
-            console.log(req.body.nohandphone);
             req.flash('info', "Fail to register your account!");
             return res.redirect('/register');
           }
@@ -109,6 +98,75 @@ module.exports = function (pool) {
         })
       });
     })
+  });
+
+  // profil
+  router.get('/profil', function (req, res, next) {
+    pool.query('SELECT * FROM public.user WHERE iduser = $1', [req.session.user.iduser], (err, data) => {
+      if (err) throw err;
+
+      res.render('profil', { title: 'Profil', user: req.session.user, data: data.rows[0], info: req.flash('info') });
+    });
+  });
+
+  router.post('/profil', function (req, res, next) {
+    console.log(req.body);
+    pool.query('UPDATE public.user SET nama = $1, email = $2, nohandphone = $3 WHERE iduser = $4', [req.body.nama, req.body.email, req.body.nohandphone, req.session.user.iduser], err => {
+      if (err) throw err;
+
+      req.flash('info', "Yeay, your profile has been updated!");
+      res.redirect('/');
+    });
+  });
+
+  router.delete('/profil', function (req, res, next) {
+    pool.query('DELETE FROM public.user WHERE iduser = $1', [req.session.user.iduser], (err) => {
+      if (err) throw err;
+
+      req.flash('info', "Your profile has been deleted!");
+      res.redirect('/');
+    });
+  });
+
+  // reset password
+  router.get('/pass', function (req, res, next) {
+    res.render('pass', { title: 'Reset password', info: req.flash('info')});
+  });
+
+  router.post('/pass', function (req, res, next) {
+    bcrypt.compare(req.body.oldpassword, data.rows[0].password, function (err, result, next) {
+      if (err) {
+        req.flash('info', "Your old password is wrong!");
+        return res.redirect('/signin');
+      }
+
+      if (result) {
+        next();
+      }
+    });
+
+    if (req.body.newpassword != req.body.renewpassword) {
+      req.flash('info', "New Pasword doesn't match!");
+      return res.redirect('/pass');
+    }
+
+    bcrypt.hash(req.body.newpassword, saltRounds, function (err, hash) {
+      if (err) {
+        req.flash('info', "Fail to encrypt password");
+        return res.redirect('/pass');
+      }
+      pool.query('UPDATE public.user SET password = $1 WHERE iduser = $2', [hash, req.session.user.iduser], err => {
+        if (err) throw err;
+
+        req.flash('info', "Yeay, your password has been reset!");
+        res.redirect('/');
+      });
+    });
+  });
+
+  // ads
+  router.get('/ads', function (req, res, next) {
+    res.render('ads', { title: 'My Advertisement', user: req.session.user });
   });
 
   // details

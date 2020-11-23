@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v4.1.1">
+    <title>My Advertisement</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/jumbotron/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="/stylesheets/bootstrap.css" rel="stylesheet"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/cfe77113ea.js" crossorigin="anonymous"></script>
+
+    <!-- Custom styles for this template -->
+    <link href="/stylesheets/jumbotron.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container">
+            <h3><i class="fas fa-home mr-2 text-light"></i></h3>
+            <a class="navbar-brand text-light font-weight-bold" href="/">rumahlaku</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+                aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-success my-2 my-sm-0 ml-2 text-light" type="submit">Search</button>
+            <a href="/signout" class="btn btn-danger my-2 my-sm-0 ml-2 text-light" type="submit">Logout</a>
+        </div>
+    </nav>
+
+    <main role="main">
+        <div class="container">
+            <h1 class="display-5" style="text-align: center; margin-top: 30px"><i
+                    class="fas fa-home mr-2 text-dark"></i>rumahlaku</h1>
+            <h4 style="text-align: center; margin-bottom: 20px;">Hi, <%= user.nama %>!</h4>
+            <p class="display-5" style="text-align: center; font-size: 18px;">This is your advertisement page. You can
+                update or delete your advertisement here :)</p>
+            <!-- Example row of columns -->
+            <div class="row">
+                <div class="col-md-4" style="margin-top: 30px;">
+                    <div class="card" style="width: 18rem; margin-left: 30px;">
+                        <img src="/images/rumah1.jpg" class="card-img-top" width="100" height="200">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
+                                of the card's
+                                content.</p>
+                            <a href="/editdetails" class="btn btn-success">Edit</a>
+                            <a href="/profil" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                    <div class="card" style="width: 18rem; margin-left: 30px; margin-top: 40px;">
+                        <img src="/images/rumah2.jpg" class="card-img-top" width="100" height="200">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
+                                of the card's
+                                content.</p>
+                            <a href="/editdetails" class="btn btn-success">Edit</a>
+                            <a href="/profil" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="margin-top: 30px;">
+                    <div class="card" style="width: 18rem; margin-left: 30px;">
+                        <img src="/images/rumah3.png" class="card-img-top" width="100" height="200">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
+                                of the card's
+                                content.</p>
+                            <a href="/editdetails" class="btn btn-success">Edit</a>
+                            <a href="/profil" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                    <div class="card" style="width: 18rem; margin-left: 30px; margin-top: 40px;">
+                        <img src="/images/rumah4.jpg" class="card-img-top" width="100" height="200">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
+                                of the card's
+                                content.</p>
+                            <a href="/editdetails" class="btn btn-success">Edit</a>
+                            <a href="/profil" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="margin-top: 30px;">
+                    <div class="card" style="width: 18rem; margin-left: 30px;">
+                        <img src="/images/rumah5.jpg" class="card-img-top" width="100" height="200">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
+                                of the card's
+                                content.</p>
+                            <a href="/editdetails" class="btn btn-success">Edit</a>
+                            <a href="/profil" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                    <div class="card" style="width: 18rem; margin-left: 30px; margin-top: 40px;">
+                        <img src="/images/rumah6.jpg" class="card-img-top" width="100" height="200">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
+                                of the card's
+                                content.</p>
+                            <a href="/editdetails" class="btn btn-success">Edit</a>
+                            <a href="/profil" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- /container -->
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center" style="margin-top: 50px;">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+    </main>
+    <footer class="container">
+        <p style="margin-top: 50px; text-align: center;">© Batch 23 Rubicamp 2020</p>
+    </footer>
+
+</body>
+
+</html>
