@@ -20,7 +20,7 @@
     <script src="https://kit.fontawesome.com/cfe77113ea.js" crossorigin="anonymous"></script>
 
     <!-- Custom styles for this template -->
-    <link href="/stylesheets/jumbotron.css" rel="stylesheet">
+    <link href="/stylesheets/index.css" rel="stylesheet">
 </head>
 
 <body>
@@ -32,16 +32,19 @@
                 aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-            <button class="btn btn-success my-2 my-sm-0 ml-2 text-light" type="submit">Search</button>
-            <a href="/signout" class="btn btn-danger my-2 my-sm-0 ml-2 text-light" type="submit">Logout</a>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="/signout" class="btn btn-danger my-2 my-sm-0 ml-2 text-light" type="submit">Logout</a>
+                </li>
+            </ul>
         </div>
     </nav>
 
     <div class="container">
-        <h1 class="display-5" style="text-align: center; margin-top: 30px;"><i class="fas fa-home mr-2 text-dark"></i>rumahlaku</h1>
+        <h1 class="display-5" style="text-align: center; margin-top: 30px;"><i
+                class="fas fa-home mr-2 text-dark"></i>rumahlaku</h1>
         <h3 style="margin-top: 30px; font-weight: bold;">Reset your password here!</h3>
-        <form for="form-profil" action="/profil" method="POST">
+        <form for="form-profil" action="/pass" method="POST">
             <div class="form-group row" style="margin-top: 10px;">
                 <label for="oldpassword" class="col-sm-2 col-form-label">Old password</label>
                 <div class="col-sm-10">
@@ -60,8 +63,13 @@
                     <input type="password" class="form-control" id="renewpassword" name="renewpassword">
                 </div>
             </div>
+            <button class="btn btn-lg btn-success btn-block" type="submit">Reset</button>
+            <% if (info.length > 0) { %>
+            <div class="alert alert-success" role="alert">
+                <%= info %>
+            </div>
+            <% } %>
         </form>
-        <button class="btn btn-lg btn-success btn-block" type="submit">Reset</button>
     </div>
     <footer class="container">
         <p style="margin-top: 50px; text-align: center;">© Batch 23 Rubicamp 2020</p>

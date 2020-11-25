@@ -20,7 +20,7 @@
     <script src="https://kit.fontawesome.com/cfe77113ea.js" crossorigin="anonymous"></script>
 
     <!-- Custom styles for this template -->
-    <link href="/stylesheets/jumbotron.css" rel="stylesheet">
+    <link href="/stylesheets/index.css" rel="stylesheet">
 </head>
 
 <body>
@@ -32,9 +32,11 @@
                 aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-            <button class="btn btn-success my-2 my-sm-0 ml-2 text-light" type="submit">Search</button>
-            <a href="/signout" class="btn btn-danger my-2 my-sm-0 ml-2 text-light" type="submit">Logout</a>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="/signout" class="btn btn-danger my-2 my-sm-0 ml-2 text-light" type="submit">Logout</a>
+                </li>
+            </ul>
         </div>
     </nav>
 
@@ -62,19 +64,19 @@
                         value="<%= data.nohandphone %>">
                 </div>
             </div>
+            <button class="btn btn-lg btn-success btn-block" type="submit">Update</button>
+            <% if (info.length > 0) { %>
+            <div class="alert alert-success" role="alert">
+                <%= info %>
+            </div>
+            <% } %>
+            <button class="btn btn-lg btn-danger btn-block" type="submit">Delete</button>
+            <% if (info.length > 0) { %>
+            <div class="alert alert-success" role="alert">
+                <%= info %>
+            </div>
+            <% } %>
         </form>
-        <button class="btn btn-lg btn-success btn-block" type="submit">Update</button>
-        <% if (info.length > 0) { %>
-        <div class="alert alert-success" role="alert">
-            <%= info %>
-        </div>
-        <% } %>
-        <button class="btn btn-lg btn-danger btn-block" type="submit">Delete</button>
-        <% if (info.length > 0) { %>
-        <div class="alert alert-success" role="alert">
-            <%= info %>
-        </div>
-        <% } %>
         <P class="mt-2">Reset your password? <a href="/pass">Click here!</a></P>
     </div>
     <footer class="container">

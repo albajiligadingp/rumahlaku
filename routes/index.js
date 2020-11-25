@@ -110,12 +110,11 @@ module.exports = function (pool) {
   });
 
   router.post('/profil', function (req, res, next) {
-    console.log(req.body);
     pool.query('UPDATE public.user SET nama = $1, email = $2, nohandphone = $3 WHERE iduser = $4', [req.body.nama, req.body.email, req.body.nohandphone, req.session.user.iduser], err => {
       if (err) throw err;
 
       req.flash('info', "Yeay, your profile has been updated!");
-      res.redirect('/');
+      res.redirect('/profil');
     });
   });
 
@@ -124,7 +123,7 @@ module.exports = function (pool) {
       if (err) throw err;
 
       req.flash('info', "Your profile has been deleted!");
-      res.redirect('/');
+      res.redirect('/profil');
     });
   });
 
@@ -134,17 +133,6 @@ module.exports = function (pool) {
   });
 
   router.post('/pass', function (req, res, next) {
-    bcrypt.compare(req.body.oldpassword, data.rows[0].password, function (err, result, next) {
-      if (err) {
-        req.flash('info', "Your old password is wrong!");
-        return res.redirect('/signin');
-      }
-
-      if (result) {
-        next();
-      }
-    });
-
     if (req.body.newpassword != req.body.renewpassword) {
       req.flash('info', "New Pasword doesn't match!");
       return res.redirect('/pass');
@@ -159,14 +147,41 @@ module.exports = function (pool) {
         if (err) throw err;
 
         req.flash('info', "Yeay, your password has been reset!");
-        res.redirect('/');
+        res.redirect('/pass');
       });
     });
   });
 
   // ads
   router.get('/ads', function (req, res, next) {
-    res.render('ads', { title: 'My Advertisement', user: req.session.user });
+    res.render('ads', { title: 'My Advertisement', user: req.session.user, info: req.flash('info') });
+  });
+
+  router.post('/ads', function (req, res, next) {
+    pool.query('INSERT INTO public.iklan (judul, tipe, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, alamat, deskripsi, gambar, penjual, nohppenjual) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)', [req.body.judul, req.body.tipe, req.body.luastanah, req.body.luasbangunan, req.body.kamartidur, req.body.kamarmandi, req.body.lantai, req.body.fasilitas, req.body.carport, req.body.sertifikasi, req.body.harga, req.body.alamat, req.body.deskripsi, req.body.gambar, req.body.penjual, req.body.nohppenjual], err => {
+      if (err) throw err;
+
+      req.flash('info', "Yeay, your ads has been added!");
+      res.redirect('/ads');
+    });
+  });
+
+  // list ads
+  router.get('/listads', function (req, res, next) {
+    pool.query('SELECT * FROM public.iklan WHERE penjual = $1', [req.session.user.nama], (err, data) => {
+      if (err) throw err;
+
+      res.render('listads', { title: 'List Ads', data: data.rows, info: req.flash('info'), user: req.session.user });
+    });
+  });
+
+  router.post('/listads', function (req, res, next) {
+    pool.query('UPDATE public.user SET nama = $1, email = $2, nohandphone = $3 WHERE iduser = $4', [req.body.nama, req.body.email, req.body.nohandphone, req.session.user.iduser], err => {
+      if (err) throw err;
+
+      req.flash('info', "Yeay, your ads has been edited!");
+      res.redirect('/listads');
+    });
   });
 
   // details
