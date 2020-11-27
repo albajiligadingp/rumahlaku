@@ -31,26 +31,66 @@
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <link rel="stylesheet" href="/resources/demos/style.css">
 
+  <style>
+    #droppable {
+      width: 305px;
+      height: 400px;
+      padding: 0.5em;
+      float: left;
+      margin: 10px;
+      border: 2px dashed black;
+      line-height: 350px;
+      text-align: center;
+      font-size: 22px;
+      color: #ccc
+    }
+  </style>
+
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
   <script>
     $(function () {
-      $("#draggable1").draggable();
-      $("#draggable2").draggable();
-      $("#draggable3").draggable();
-      $("#draggable4").draggable();
-      $("#draggable5").draggable();
-      $("#draggable6").draggable();
+      $(".draggable").draggable({ revert: "invalid" });
       $("#droppable").droppable({
-                drop: function (event, ui) {
-                    $(this)
-                        .addClass("ui-state-highlight")
-                        .find("p")
-                        .html("Dropped!");
-                }
-            });
+        accept: ".draggable",
+        classes: {
+          "ui-droppable-active": "ui-state-active",
+          "ui-droppable-hover": "ui-state-hover"
+        },
+        drop: function (event, ui) {
+          $(this)
+            .addClass("ui-state-highlight")
+            .find("p")
+            .html("Dropped!");
+        }
+      });
     });
+  </script>
+
+  <!-- Make a chained dropdown list -->
+  <script>
+    function filter() {
+      let provinsi = document.getElementById('provinsi').value;
+      let list = [];
+
+      if (provinsi == "Jawa Barat") {
+        list.push("Bandung", "Bogor", "Bekasi", "Garut", "Tasikmalaya");
+      } else if (provinsi == "Jawa Tengah") {
+        list.push("Yogyakarta", "Surakarta", "Semarang", "Tegal", "Sragen")
+      } else if (provinsi == "Jawa Timur") {
+        list.push("Surabaya", "Malang", "Kediri", "Madiun", "Lamongan")
+      } else {
+        let list = [];
+      }
+
+      let kota = "";
+      for (let i = 0; i < list.length; i++) {
+        kota += "<option>" + list[i] + "</option>"
+      }
+
+      document.getElementById('kota').innerHTML = kota;
+    }
   </script>
 </head>
 
@@ -62,14 +102,11 @@
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClvGFVxCfij8CvcYOdhEQzUQjEqjRvfX0&libraries=places"></script>
 
   <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <div class="container">
+    <div class="container-fluid">
       <h3><i class="fas fa-home mr-2 text-light"></i></h3>
       <a class="navbar-brand text-light font-weight-bold" style="margin-left: px;" href="/">rumahlaku</a>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a href="/ads" class="btn btn-warning ml-2 text-light" type="submit">Create</a>
-          </li>
           <li class="nav-item">
             <div class="dropdown">
               <button class="btn btn-info dropdown-toggle ml-2" type="button" id="dropdownMenuButton"
@@ -82,6 +119,9 @@
                 <a class="dropdown-item" href="/signout">Logout</a>
               </div>
             </div>
+          </li>
+          <li class="nav-item">
+            <a href="/ads" class="btn btn-warning ml-2 text-light" type="submit">Create</a>
           </li>
         </ul>
       </div>
@@ -97,7 +137,7 @@
     </div>
   </div>
 
-  <div class="container">
+  <div class="container-fluid">
     <h3 style="text-align: left; margin-bottom: 20px;">Welcome, <%= user.nama%>!</h3>
     <input id="search" class="form-control" type="text" placeholder="Enter your city here..." aria-label="Search">
     <!-- Set up Google Maps Javascript and Places API -->
@@ -171,108 +211,88 @@
         map.fitBounds(bounds);
       });
     </script>
+  </div>
 
-    <!-- Example row of columns -->
+  <div class="container-fluid">
     <div class="row">
-      <div class="col-md-4" style="margin-top: 30px;">
-        <div id="draggable1" class="ui-widget-content">
-          <div class="card" style="background-color: transparent;">
-            <img src="/images/rumah1.jpg" class="card-img-top" width="200" height="200">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-              <a href="/details" class="btn btn-primary">View details</a>
+      <div class="col-sm-3">
+        <h3 style="margin-left: 30px; margin-top: 40px">Filter</h3>
+        <nav class="nav flex-column" style="margin-left: 30px; margin-top: 20px">
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#kategori"
+            aria-expanded="false" aria-controls="collapseExample" style="margin-top: 5px">
+            Filter by category
+          </button>
+          <div class="collapse" id="kategori">
+            <div class="card card-body">
+              <select class="custom-select">
+                <option disabled selected>Pilih Kategori</option>
+                <option value="jual">Jual</option>
+                <option value="sewa">Sewa</option>
+              </select>
             </div>
           </div>
-        </div>
-        <div id="draggable2" class="ui-widget-content" style="margin-top: 30px;">
-          <div class="card" style="background-color: transparent;">
-            <img src="/images/rumah2.jpg" class="card-img-top" width="200" height="200">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-              <a href="/details" class="btn btn-primary">View details</a>
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#lokasi"
+            aria-expanded="false" aria-controls="collapseExample" style="margin-top: 30px">
+            Filter by location
+          </button>
+          <div class="collapse" id="lokasi">
+            <div class="card card-body">
+              <select class="custom-select" id="provinsi" onchange="filter()">
+                <option disabled selected>Pilih Provinsi</option>
+                <option value="Jawa Barat">Jawa Barat</option>
+                <option value="Jawa Tengah">Jawa Tengah</option>
+                <option value="Jawa Timur">Jawa Timur</option>
+              </select>
+              <select class="custom-select" id="kota" style="margin-top: 20px">
+                <option disabled selected>Pilih Kota</option>
+              </select>
             </div>
           </div>
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#harga"
+            aria-expanded="false" aria-controls="collapseExample" style="margin-top: 30px">
+            Filter by price
+          </button>
+          <div class="collapse" id="harga">
+            <div class="card card-body">
+              <select class="custom-select">
+                <option disabled selected>Urutkan Harga</option>
+                <option value="asc">Tertinggi - Terendah</option>
+                <option value="desc">Terendah - Tertinggi</option>
+              </select>
+            </div>
+          </div>
+        </nav>
+        <div id="droppable" class="ui-widget-header" style="margin-top: 50px; margin-left: 30px">
+          <p>Area to Compare</p>
         </div>
       </div>
-      <div class="col-md-4" style="margin-top: 30px;">
-        <div id="draggable3" class="ui-widget-content">
-          <div class="card" style="background-color: transparent;">
-            <img src="/images/rumah1.jpg" class="card-img-top" width="200" height="200">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-              <a href="/details" class="btn btn-primary">View details</a>
+      <div class="col-sm-9">
+        <div class="row">
+          <% data.forEach(data => { %>
+          <div class="draggable" style="width: 18rem; margin-top: 40px; margin-left: 50px">
+            <img src=/<%= data.gambar %> class="card-img-top" alt="">
+            <div class="card-body" style="width: 300px; height: 150px;">
+              <h5 class="card-title"><%= data.judul %></h5>
+              <p class="card-text"><%= data.harga %></p>
+              <a href="/details/<%= data.idiklan %>" class="btn btn-primary">View Details</a>
             </div>
           </div>
-        </div>
-        <div id="draggable4" class="ui-widget-content" style="margin-top: 30px;">
-          <div class="card" style="background-color: transparent;">
-            <img src="/images/rumah2.jpg" class="card-img-top" width="200" height="200">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-              <a href="/details" class="btn btn-primary">View details</a>
-            </div>
-          </div>
-        </div>
-        <div id="droppable" class="ui-widget-headr" style="margin-top: 30px; margin-left: 25px;">
-          <div class="card" style="background-color: lightblue; width: 300px; height: 300px;">
-            <p style="font-size:large;">Drag here to compare your ads!</p>
-          </div>
+          <% }) %>
         </div>
       </div>
-      <div class="col-md-4" style="margin-top: 30px;">
-        <div id="draggable5" class="ui-widget-content">
-          <div class="card" style="background-color: transparent;">
-            <img src="/images/rumah1.jpg" class="card-img-top" width="200" height="200">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-              <a href="/details" class="btn btn-primary">View details</a>
-            </div>
-          </div>
-        </div>
-        <div id="draggable6" class="ui-widget-content" style="margin-top: 30px;">
-          <div class="card" style="background-color: transparent;">
-            <img src="/images/rumah2.jpg" class="card-img-top" width="200" height="200">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-              <a href="/details" class="btn btn-primary">View details</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> <!-- /container -->
-
-    <div class="row">
-      <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center" style="margin-top: 50px;">
-          <li class="page-item disabled">
-            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-          </li>
+      <nav aria-label="Page navigation example" style="margin-top: 40px; margin-left: 770px">
+        <ul class="pagination">
+          <li class="page-item"><a class="page-link" href="#">Previous</a></li>
           <li class="page-item"><a class="page-link" href="#">1</a></li>
           <li class="page-item"><a class="page-link" href="#">2</a></li>
           <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item">
-            <a class="page-link" href="#">Next</a>
-          </li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
         </ul>
       </nav>
+      <footer class="container">
+        <p style="margin-top: 50px; text-align: center;">© Batch 23 Rubicamp 2020</p>
+      </footer>
     </div>
-
-    <footer class="container">
-      <p style="margin-top: 50px; text-align: center;">© Batch 23 Rubicamp 2020</p>
-    </footer>
-
 </body>
 
 </html>

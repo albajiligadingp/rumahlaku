@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
 // middleware login
 const isLoggedIn = function (req, res, next) {
@@ -15,7 +17,11 @@ const isLoggedIn = function (req, res, next) {
 module.exports = function (pool) {
   // home page
   router.get('/', isLoggedIn, function (req, res, next) {
-    res.render('index', { title: 'Welcome!', user: req.session.user });
+    pool.query('SELECT * FROM public.iklan WHERE iduser = $1', [req.session.user.iduser], (err, data) => {
+      if (err) console.log(err);
+
+      res.render('index', { title: 'Home', user: req.session.user, data: data.rows, info: req.flash('info') });
+    });
   });
 
   // sign in
@@ -129,7 +135,7 @@ module.exports = function (pool) {
 
   // reset password
   router.get('/pass', function (req, res, next) {
-    res.render('pass', { title: 'Reset password', info: req.flash('info')});
+    res.render('pass', { title: 'Reset password', info: req.flash('info') });
   });
 
   router.post('/pass', function (req, res, next) {
@@ -154,39 +160,72 @@ module.exports = function (pool) {
 
   // ads
   router.get('/ads', function (req, res, next) {
-    res.render('ads', { title: 'My Advertisement', user: req.session.user, info: req.flash('info') });
-  });
-
-  router.post('/ads', function (req, res, next) {
-    pool.query('INSERT INTO public.iklan (judul, tipe, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, alamat, deskripsi, gambar, penjual, nohppenjual) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)', [req.body.judul, req.body.tipe, req.body.luastanah, req.body.luasbangunan, req.body.kamartidur, req.body.kamarmandi, req.body.lantai, req.body.fasilitas, req.body.carport, req.body.sertifikasi, req.body.harga, req.body.alamat, req.body.deskripsi, req.body.gambar, req.body.penjual, req.body.nohppenjual], err => {
+    pool.query('SELECT * FROM public.iklan WHERE iduser = $1', [req.session.user.iduser], (err, data) => {
       if (err) throw err;
 
+      res.render('ads', { title: 'Create Ads', data: data.rows, info: req.flash('info'), user: req.session.user });
+    });
+  });
+
+  router.post('/ads', upload.single('gambar'), function (req, res, next) {
+    console.log(req.body)
+    const { kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, gambar, deskripsi, provinsi, kota, alamat } = req.body;
+
+    pool.query(`INSERT INTO public.iklan (kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, gambar, deskripsi, provinsi, kota, alamat, iduser)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`, [kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, gambar, deskripsi, provinsi, kota, alamat, req.session.user.iduser], err => {
+      if (err) throw err; 
+      
       req.flash('info', "Yeay, your ads has been added!");
-      res.redirect('/ads');
+      res.redirect('/ads')
     });
   });
 
   // list ads
   router.get('/listads', function (req, res, next) {
-    pool.query('SELECT * FROM public.iklan WHERE penjual = $1', [req.session.user.nama], (err, data) => {
+    pool.query('SELECT * FROM public.iklan WHERE iduser = $1', [req.session.user.iduser], (err, data) => {
       if (err) throw err;
 
       res.render('listads', { title: 'List Ads', data: data.rows, info: req.flash('info'), user: req.session.user });
     });
   });
 
-  router.post('/listads', function (req, res, next) {
-    pool.query('UPDATE public.user SET nama = $1, email = $2, nohandphone = $3 WHERE iduser = $4', [req.body.nama, req.body.email, req.body.nohandphone, req.session.user.iduser], err => {
+  // edit ads
+  router.get('/editads/:id', function (req, res, next) {
+    pool.query('SELECT * FROM public.iklan WHERE idiklan = $1', [req.params.id], (err, data) => {
       if (err) throw err;
 
-      req.flash('info', "Yeay, your ads has been edited!");
+      res.render('editads', { title: 'Edit Ads', data: data.rows[0], info: req.flash('info'), user: req.session.user });
+    });
+  });
+
+  router.post('/editads/:id', function (req, res, next) {
+    console.log(req.body);
+    const { kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, gambar, deskripsi, provinsi, kota, alamat } = req.body;
+
+    pool.query('UPDATE public.iklan SET kategori = $1, judul = $2, luastanah = $3, luasbangunan = $4, kamartidur = $5, kamarmandi = $6, lantai = $7, fasilitas = $8, carport = $9, sertifikasi = $10, harga = $11, gambar = $12, deskripsi = $13, provinsi = $14, kota = $15, alamat = $16 WHERE idiklan = $17)', [kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, gambar, deskripsi, provinsi, kota, alamat, req.params.id], (err) => {
+      if (err) throw err; 
+      
+      req.flash('info', "Yeay, your ads has been updated!");
+      res.redirect('/editads');
+    });
+  });
+
+  // delete ads
+  router.get('/deleteads/:id', function (req, res, next) {
+    pool.query('DELETE FROM public.iklan WHERE idiklan = $1', [req.params.id], (err) => {
+      if (err) throw err;
+
       res.redirect('/listads');
     });
   });
 
   // details
-  router.get('/details', function (req, res, next) {
-    res.render('details', { title: 'Details' });
+  router.get('/details/:id', function (req, res, next) {
+    pool.query('SELECT * FROM public.iklan WHERE idiklan = $1', [req.params.id], (err, data) => {
+      if (err) throw err;
+
+      res.render('details', { title: 'Edit Ads', data: data.rows[0], user: req.session.user });
+    });
   });
 
   return router;
