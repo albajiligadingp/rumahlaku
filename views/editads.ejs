@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Jekyll v4.1.1">
-    <title>Create Ads</title>
+    <title>Edit Ads</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/jumbotron/">
 
@@ -53,7 +53,7 @@
 
       let kota = "";
       for (let i = 0; i < list.length; i++) {
-        kota += "<option>" + list[i] + "</option>"
+        kota += "<option value=" + list[i] + " <%= data.kota == " + list[i] + " ? 'selected' : '' %>>" + list[i] + "</option>"
       }
 
       document.getElementById('kota').innerHTML = kota;
@@ -189,100 +189,73 @@
             </div>
             <div class="form-group">
                 <label for="exampleFormControlFile1">Pilih Gambar</label>
-                <input type="file" class="form-control-file" name="gambar" onchange="preview(event)" value="<%= data.gambar %>">
-                <img src="/images/home.png" id="image" style="widht: 100px; height: 100px; margin-top: 20px">
+                <input type="file" class="form-control-file" name="gambar" value="<%= data.gambar %>">
             </div>
-            <script>
-                function preview(event) {
-                    let input = event.target.files[0];
-                    let reader = new FileReader();
-
-                    reader.onload = function () {
-                        let result = reader.result;
-                        let image = document.getElementById('image');
-                        image.src = result;
-                    }
-                    reader.readAsDataURL(input);
-                }
-            </script>
-            <div class="form-group">
-                <label for="deskripsi" style="margin-top: 10px;">Deskripsi</label>
-                <textarea class="form-control" id="deskripsi" rows="3" name="deskripsi" value="<%= data.deskripsi %>"
-                    placeholder="Deskripsi"></textarea>
+            <div class="form-group row">
+                <label for="nama" class="col-sm-2 col-form-label">Deskripsi</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="deskripsi" name="deskripsi"
+                        placeholder="deskripsi" value="<%= data.deskripsi %>">
+                </div>
             </div>
             <h4 style="margin-top: 30px; font-weight: bold;">Lokasi</h4>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Provinsi</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="provinsi" name="provinsi" onchange="filter()" value="<%= data.provinsi %>">
+                    <select class="form-control" id="provinsi" name="provinsi" onchange="filter()">
                         <option disabled selected>Pilih Provinsi</option>
-                        <option value="Jawa Barat">Jawa Barat</option>
-                        <option value="Jawa Tengah">Jawa Tengah</option>
-                        <option value="Jawa Timur">Jawa Timur</option>
+                        <option value='Jawa Barat' <%= data.provinsi == 'Jawa Barat' ? 'selected' : '' %>>Jawa Barat</option>
+                        <option value='Jawa Tengah' <%= data.provinsi == 'Jawa Tengah' ? 'selected' : '' %>>Jawa Tengah</option>
+                        <option value='Jawa Timur' <%= data.provinsi == 'Jawa Timur' ? 'selected' : '' %>>Jawa Timur</option>
                     </select>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Kota</label>
                 <div class="col-sm-10">
-                    <select class="form-control" id="kota" name="kota" value="<%= data.kota %>">
-                        <option disabled selected placeholder="Pilih Kota">Pilih Kota</option>
+                    <select class="form-control" id="kota" name="kota">
+                        <option disabled selected>Pilih Kota</option>
                     </select>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="alamatlengkap" style="margin-top: 10px;">Alamat Lengkap</label>
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="alamat" value="<%= data.alamat %>"
-                    placeholder="Alamat lengkap"></textarea>
+            <div class="form-group row">
+                <label for="nama" class="col-sm-2 col-form-label">Alamat Lengkap</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="alamat" name="alamat" placeholder="alamat"
+                        value="<%= data.alamat %>">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-10">
+                    <input disabled type="hidden" class="form-control" id="lat" name="lat" value="<%= data.lat %>">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-10">
+                    <input disabled type="hidden" class="form-control" id="lng" name="lng" value="<%= data.lng %>">
+                </div>
             </div>
             <!-- Set up Google Maps Javascript and Places API -->
             <div id="map"></div>
             <script>
-                // Google Maps Script API                let map;
+                let lat = document.getElementById('lat').value;
+                let lng = document.getElementById('lng').value;
+                
+                let options = {
+                    center: new google.maps.LatLng(lat, lng),
+                    zoom: 13,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+
+                let map;
                 // Show the map, center point Indonesia
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: {
-                        lat: -1.334465038429288,
-                        lng: 124.09884761182217
-                    },
-                    zoom: 4.5
-                });                // Make search input connected with the map
-                let input = document.getElementById('search');
-                let searchBox = new google.maps.places.SearchBox(input); map.controls[google.maps.ControlPosition.TOP_LEFT].push(input); map.addListener('bounds_changed', function () {
-                    searchBox.setBounds(map.getBounds());
-                }); let markers = [];                // Activate details from the location we choose
-                searchBox.addListener('places_changed', function () {
-                    var places = searchBox.getPlaces(); if (places.length == 0) {
-                        return;
-                    }                    // Reset marker
-                    markers.forEach(function (marker) {
-                        marker.setMap(null);
-                    });
-                    markers = []; let bounds = new google.maps.LatLngBounds();
-                    places.forEach(function (place) {
-                        if (!place.geometry) {
-                            console.log("Returned place contains no geometry");
-                            return;
-                        }
-                        var icon = {
-                            url: place.icon,
-                            size: new google.maps.Size(71, 71),
-                            origin: new google.maps.Point(0, 0),
-                            anchor: new google.maps.Point(17, 34),
-                            scaledSize: new google.maps.Size(25, 25)
-                        }; markers.push(new google.maps.Marker({
-                            map: map,
-                            icon: icon,
-                            title: place.name,
-                            position: place.geometry.location
-                        })); if (place.geometry.viewport) {
-                            bounds.union(place.geometry.viewport);
-                        } else {
-                            bounds.extend(place.geometry.location);
-                        }
-                    });
-                    map.fitBounds(bounds);
-                });
+                map = new google.maps.Map(document.getElementById('map'), options);
+
+                let marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(lat, lng),
+                    map: map,
+                    animation: google.maps.Animation.BOUNCE,
+                });             
             </script>
             <button class="btn btn-lg btn-success btn-block" type="submit" style="margin-top: 20px">Update Iklan</button>
             <% if (info.length > 0) { %>

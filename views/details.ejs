@@ -244,14 +244,10 @@
                 // Show the map, center point Indonesia
                 map = new google.maps.Map(document.getElementById('map'), options);
 
-                let infowindow = new google.maps.InfoWindow();
-                let judul = document.getElementById('judul').value;
-
                 let marker = new google.maps.Marker({
                     position: new google.maps.LatLng(lat, lng),
                     map: map,
                     animation: google.maps.Animation.BOUNCE,
-                    infowindow: judul
                 });
             </script>
             <h4 style="margin-top: 30px; font-weight: bold;">Detail Penjual</h4>
