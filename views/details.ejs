@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Jekyll v4.1.1">
-    <title>Create Ads</title>
+    <title>Details</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/jumbotron/">
 
@@ -36,29 +36,31 @@
     </style>
 
     <!-- Make a chained dropdown list -->
-  <script>
-    function filter() {
-      let provinsi = document.getElementById('provinsi').value;
-      let list = [];
+    <script>
+        function filter() {
+            let provinsi = document.getElementById('provinsi').value;
+            let list = [];
 
-      if (provinsi == "Jawa Barat") {
-        list.push("Bandung", "Bogor", "Bekasi", "Garut", "Tasikmalaya");
-      } else if (provinsi == "Jawa Tengah") {
-        list.push("Yogyakarta", "Surakarta", "Semarang", "Tegal", "Sragen")
-      } else if (provinsi == "Jawa Timur") {
-        list.push("Surabaya", "Malang", "Kediri", "Madiun", "Lamongan")
-      } else {
-        let list = [];
-      }
+            if (provinsi == "Jawa Barat") {
+                list.push("Bandung", "Bogor", "Bekasi", "Garut", "Tasikmalaya");
+            } else if (provinsi == "Jawa Tengah") {
+                list.push("Yogyakarta", "Surakarta", "Semarang", "Tegal", "Sragen")
+            } else if (provinsi == "Jawa Timur") {
+                list.push("Surabaya", "Malang", "Kediri", "Madiun", "Lamongan")
+            } else {
+                let list = [];
+            }
 
-      let kota = "";
-      for (let i = 0; i < list.length; i++) {
-        kota += "<option>" + list[i] + "</option>"
-      }
+            let kota = "";
+            for (let i = 0; i < list.length; i++) {
+                kota += "<option>" + list[i] + "</option>"
+            }
 
-      document.getElementById('kota').innerHTML = kota;
-    }
-  </script>
+            document.getElementById('kota').innerHTML = kota;
+        }
+    </script>
+
+
 </head>
 
 <body>
@@ -79,7 +81,7 @@
     -->
 
     <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClvGFVxCfij8CvcYOdhEQzUQjEqjRvfX0&libraries=places"></script>
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClvGFVxCfij8CvcYOdhEQzUQjEqjRvfX0&libraries=places"></script>
 
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
@@ -105,19 +107,19 @@
             <div class="form-group row" style="margin-top: 10px;">
                 <label for="nama" class="col-sm-2 col-form-label">ID Iklan</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="judul" name="judul" value="<%= data.idiklan %>">
+                    <input disabled type="text" class="form-control" id="judul" name="judul"
+                        value="<%= data.idiklan %>">
                 </div>
             </div>
             <h4 style="margin-top: 30px; font-weight: bold;">Kategori</h4>
-            <div class="form-check form-check-inline">
-                <input disabled class="form-check-input" type="radio" name="kategori" id="jual" value="<%= data.kategori %>">
-                <label class="form-check-label" for="inlineRadio1">Jual</label>
+            <div class="form-group row" style="margin-top: 10px;">
+                <label for="nama" class="col-sm-2 col-form-label">Kategori</label>
+                <div class="col-sm-10">
+                    <input disabled type="text" class="form-control" id="kategori" name="kategori"
+                        value="<%= data.kategori %>">
+                </div>
             </div>
-            <div class="form-check form-check-inline">
-                <input disabled class="form-check-input" type="radio" name="kategori" id="sewa" value="<%= data.kategori %>">
-                <label class="form-check-label" for="inlineRadio2">Sewa</label>
-            </div>
-            <h4 style="margin-top: 30px; font-weight: bold;">Detail Iklan</h4>
+            <h4 style="margin-top: 30px; font-weight: bold;">Detail</h4>
             <div class="form-group row" style="margin-top: 10px;">
                 <label for="nama" class="col-sm-2 col-form-label">Judul Iklan</label>
                 <div class="col-sm-10">
@@ -127,174 +129,144 @@
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Luas Tanah</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="luastanah" name="luastanah" placeholder="Luas tanah" value="<%= data.luastanah %>">
+                    <input disabled type="text" class="form-control" id="luastanah" name="luastanah"
+                        placeholder="Luas tanah" value="<%= data.luastanah %>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Luas Bangunan</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="luasbangunan" name="luasbangunan" value="<%= data.luasbangunan %>"
-                        placeholder="Luas bangunan">
+                    <input disabled type="text" class="form-control" id="luasbangunan" name="luasbangunan"
+                        value="<%= data.luasbangunan %>" placeholder="Luas bangunan">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Kamar Tidur</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="kamartidur" name="kamartidur" value="<%= data.kamartidur %>"
-                        placeholder="Jumlah kamar tidur">
+                    <input disabled type="text" class="form-control" id="kamartidur" name="kamartidur"
+                        value="<%= data.kamartidur %>" placeholder="Jumlah kamar tidur">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Kamar Mandi</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="kamarmandi" name="kamarmandi" value="<%= data.kamarmandi %>"
-                        placeholder="Jumlah kamar mandi">
+                    <input disabled type="text" class="form-control" id="kamarmandi" name="kamarmandi"
+                        value="<%= data.kamarmandi %>" placeholder="Jumlah kamar mandi">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Lantai</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="lantai" name="lantai" placeholder="Jumlah lantai" value="<%= data.lantai %>">
+                    <input disabled type="text" class="form-control" id="lantai" name="lantai"
+                        placeholder="Jumlah lantai" value="<%= data.lantai %>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Fasilitas</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="fasilitas" name="fasilitas" value="<%= data.fasilitas %>"
-                        placeholder="Fasilitas yang tersedia">
+                    <input disabled type="text" class="form-control" id="fasilitas" name="fasilitas"
+                        value="<%= data.fasilitas %>" placeholder="Fasilitas yang tersedia">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Carport</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="carport" name="carport" placeholder="Carport" value="<%= data.carport %>">
+                    <input disabled type="text" class="form-control" id="carport" name="carport" placeholder="Carport"
+                        value="<%= data.carport %>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Sertifikasi</label>
                 <div class="col-sm-10">
-                    <select disabled class="form-control" name="sertifikasi" id="sertifikasi" value="<%= data.sertifikasi %>">
-                        <option disabled selected>Pilih Jenis Sertifikasi</option>
-                        <option value="SHM - Sertifikat Hak Milik">SHM - Sertifikat Hak Milik</option>
-                        <option value="HGB - Hak Guna Bangun">HGB - Hak Guna Bangun</option>
-                        <option value="Lainnya (PPJB, Girik, Adat, dll)">Lainnya (PPJB, Girik, Adat, dll)</option>
-                    </select>
+                    <input disabled type="text" class="form-control" id="sertifikasi" name="sertifikasi"
+                        placeholder="sertifikasi" value="<%= data.sertifikasi %>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Harga</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="harga" name="harga" placeholder="Harga dalam rupiah" value="<%= data.harga %>">
+                    <input disabled type="text" class="form-control" id="harga" name="harga"
+                        placeholder="Harga dalam rupiah" value="<%= data.harga %>">
                 </div>
             </div>
-            <div class="form-group">
-                <label for="exampleFormControlFile1">Pilih Gambar</label>
-                <input disabled type="file" class="form-control-file" name="gambar" onchange="preview(event)" value="<%= data.gambar %>">
-                <img src="/images/home.png" id="image" style="widht: 100px; height: 100px; margin-top: 20px">
-            </div>
-            <script>
-                function preview(event) {
-                    let input = event.target.files[0];
-                    let reader = new FileReader();
-
-                    reader.onload = function () {
-                        let result = reader.result;
-                        let image = document.getElementById('image');
-                        image.src = result;
-                    }
-                    reader.readAsDataURL(input);
-                }
-            </script>
-            <div class="form-group">
-                <label for="deskripsi" style="margin-top: 10px;">Deskripsi</label>
-                <textarea disabled class="form-control" id="deskripsi" rows="3" name="deskripsi" value="<%= data.deskripsi %>"
-                    placeholder="Deskripsi"></textarea>
+            <div class="form-group row">
+                <label for="nama" class="col-sm-2 col-form-label">Deskripsi</label>
+                <div class="col-sm-10">
+                    <input disabled type="text" class="form-control" id="deskripsi" name="deskripsi"
+                        placeholder="deskripsi" value="<%= data.deskripsi %>">
+                </div>
             </div>
             <h4 style="margin-top: 30px; font-weight: bold;">Lokasi</h4>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Provinsi</label>
                 <div class="col-sm-10">
-                    <select disabled class="form-control" id="provinsi" name="provinsi" onchange="filter()" value="<%= data.provinsi %>">
-                        <option disabled selected>Pilih Provinsi</option>
-                        <option value="Jawa Barat">Jawa Barat</option>
-                        <option value="Jawa Tengah">Jawa Tengah</option>
-                        <option value="Jawa Timur">Jawa Timur</option>
-                    </select>
+                    <input disabled type="text" class="form-control" id="provinsi" name="provinsi"
+                        placeholder="provinsi" value="<%= data.provinsi %>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Kota</label>
                 <div class="col-sm-10">
-                    <select disabled class="form-control" id="kota" name="kota">
-                        <option disabled selected placeholder="Pilih Kota" value="<%= data.kota %>">Pilih Kota</option>
-                    </select>
+                    <input disabled type="text" class="form-control" id="kota" name="kota" placeholder="kota"
+                        value="<%= data.kota %>">
                 </div>
             </div>
-            <div class="form-group">
-                <label for="alamatlengkap" style="margin-top: 10px;">Alamat Lengkap</label>
-                <textarea disabled class="form-control" id="exampleFormControlTextarea1" rows="3" name="alamat" value="<%= data.alamat %>"
-                    placeholder="Alamat lengkap"></textarea>
+            <div class="form-group row">
+                <label for="nama" class="col-sm-2 col-form-label">Alamat Lengkap</label>
+                <div class="col-sm-10">
+                    <input disabled type="text" class="form-control" id="alamat" name="alamat" placeholder="alamat"
+                        value="<%= data.alamat %>">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-10">
+                    <input disabled type="hidden" class="form-control" id="lat" name="lat" value="<%= data.lat %>">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-10">
+                    <input disabled type="hidden" class="form-control" id="lng" name="lng" value="<%= data.lng %>">
+                </div>
             </div>
             <!-- Set up Google Maps Javascript and Places API -->
             <div id="map"></div>
             <script>
-                // Google Maps Script API                let map;
+                let lat = document.getElementById('lat').value;
+                let lng = document.getElementById('lng').value;
+                
+                let options = {
+                    center: new google.maps.LatLng(lat, lng),
+                    zoom: 13,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+
+                let map;
                 // Show the map, center point Indonesia
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: {
-                        lat: -1.334465038429288,
-                        lng: 124.09884761182217
-                    },
-                    zoom: 4.5
-                });                // Make search input connected with the map
-                let input = document.getElementById('search');
-                let searchBox = new google.maps.places.SearchBox(input); map.controls[google.maps.ControlPosition.TOP_LEFT].push(input); map.addListener('bounds_changed', function () {
-                    searchBox.setBounds(map.getBounds());
-                }); let markers = [];                // Activate details from the location we choose
-                searchBox.addListener('places_changed', function () {
-                    var places = searchBox.getPlaces(); if (places.length == 0) {
-                        return;
-                    }                    // Reset marker
-                    markers.forEach(function (marker) {
-                        marker.setMap(null);
-                    });
-                    markers = []; let bounds = new google.maps.LatLngBounds();
-                    places.forEach(function (place) {
-                        if (!place.geometry) {
-                            console.log("Returned place contains no geometry");
-                            return;
-                        }
-                        var icon = {
-                            url: place.icon,
-                            size: new google.maps.Size(71, 71),
-                            origin: new google.maps.Point(0, 0),
-                            anchor: new google.maps.Point(17, 34),
-                            scaledSize: new google.maps.Size(25, 25)
-                        }; markers.push(new google.maps.Marker({
-                            map: map,
-                            icon: icon,
-                            title: place.name,
-                            position: place.geometry.location
-                        })); if (place.geometry.viewport) {
-                            bounds.union(place.geometry.viewport);
-                        } else {
-                            bounds.extend(place.geometry.location);
-                        }
-                    });
-                    map.fitBounds(bounds);
+                map = new google.maps.Map(document.getElementById('map'), options);
+
+                let infowindow = new google.maps.InfoWindow();
+                let judul = document.getElementById('judul').value;
+
+                let marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(lat, lng),
+                    map: map,
+                    animation: google.maps.Animation.BOUNCE,
+                    infowindow: judul
                 });
             </script>
             <h4 style="margin-top: 30px; font-weight: bold;">Detail Penjual</h4>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">ID Penjual</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="idpenjual" name="idpenjual" value="<%= user.iduser %>">
+                    <input disabled type="text" class="form-control" id="idpenjual" name="idpenjual"
+                        value="<%= user.iduser %>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Nama Penjual</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="penjual" name="penjual" value="<%= user.nama %>">
+                    <input disabled type="text" class="form-control" id="penjual" name="penjual"
+                        value="<%= user.nama %>">
                 </div>
             </div>
             <div class="form-group row">
@@ -304,7 +276,9 @@
                         value="<%= user.nohandphone %>">
                 </div>
             </div>
-            <button class="btn btn-lg btn-success btn-block" type="submit" style="margin-top: 20px">Hubungi Penjual</button>
+
+            <button class="btn btn-lg btn-success btn-block" type="submit" style="margin-top: 20px">Hubungi
+                Penjual</button>
         </form>
     </div>
     <footer class="container">

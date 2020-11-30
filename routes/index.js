@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
 
 // middleware login
 const isLoggedIn = function (req, res, next) {
@@ -17,10 +15,120 @@ const isLoggedIn = function (req, res, next) {
 module.exports = function (pool) {
   // home page
   router.get('/', isLoggedIn, function (req, res, next) {
-    pool.query('SELECT * FROM public.iklan WHERE iduser = $1', [req.session.user.iduser], (err, data) => {
-      if (err) console.log(err);
+    const kategoriFiltered = req.query.kategori;
+    const provinsiFiltered = req.query.provinsi;
+    const kotaFiltered = req.query.kota;
+    const hargaFiltered = req.query.harga;
 
-      res.render('index', { title: 'Home', user: req.session.user, data: data.rows, info: req.flash('info') });
+    let filter = [];
+    let field = [];
+
+    if (kategoriFiltered) {
+      filter.push(kategoriFiltered);
+      field.push('kategori');
+    }
+
+    if (provinsiFiltered) {
+      filter.push(provinsiFiltered);
+      field.push('provinsi');
+    }
+
+    if (kotaFiltered) {
+      filter.push(kotaFiltered);
+      field.push('kota');
+    }
+
+    if (hargaFiltered) {
+      filter.push(hargaFiltered);
+      field.push('harga');
+    }
+
+    console.log(req.query.kategori)
+    console.log(field)
+
+    let sql = `SELECT count(*) FROM public.iklan`;
+
+    if (filter.length > 0) {
+      sql += ` WHERE`;
+      for (let i = 0; i < field.length; i++) {
+        switch (field[i]) {
+          case 'kategori':
+            sql += ` ${field[i]} = ${filter[i]}`;
+            break;
+          case 'provinsi':
+            sql += ` ${field[i]} = ${filter[i]}`;
+            break;
+          case 'kota':
+            sql += ` ${field[i]} = ${filter[i]}`;
+            break;
+          case 'harga':
+            sql += ` ${field[i]} = ${filter[i]}`;
+            break;
+        }
+        if (i !== field.length - 1) sql += ` AND`;
+      }
+    }
+
+    const page = Number(req.query.page) || 1;
+    const perPage = 6;
+    const queries = req.query;
+
+    pool.query(sql, (err, count) => {
+      if (err) console.log(err);
+      const total = count.rows[0].count;
+      const pages = Math.ceil(total / perPage);
+      const offset = (page - 1) * perPage;
+      const urlTemp = req.url == '/' ? '/?page=1' : req.url;
+      let url = '';
+
+      for (let i = 0; i < urlTemp.length; i++) {
+        if (urlTemp[i] === '/') {
+          i++;
+        }
+        url += urlTemp[i];
+      }
+
+      let sql = `SELECT * FROM public.iklan`;
+
+      if (filter.length > 0) {
+        sql += ` WHERE`;
+        for (let i = 0; i < field.length; i++) {
+          switch (field[i]) {
+            case 'kategori':
+              sql += ` ${field[i]} = ${filter[i]}`;
+              break;
+            case 'provinsi':
+              sql += ` ${field[i]} = ${filter[i]}`;
+              break;
+            case 'kota':
+              sql += ` ${field[i]} = ${filter[i]}`;
+              break;
+            case 'harga':
+              sql += ` ${field[i]} = ${filter[i]}`;
+              break;
+          }
+          if (i !== field.length - 1) sql += ` AND`;
+        }
+      }
+
+      if (filter.length < 2) {
+        sql += ` ORDER BY idiklan ASC`;
+      }
+
+      sql += ` LIMIT ${perPage} OFFSET ${offset}`;
+
+      pool.query(sql, (err, rows) => {
+        if (err) console.log(err);
+
+        res.render('index', {
+          data: rows.rows,
+          query: queries,
+          current: page,
+          pages,
+          url,
+          user: req.session.user
+        });
+      });
     });
   });
 
@@ -167,17 +275,26 @@ module.exports = function (pool) {
     });
   });
 
-  router.post('/ads', upload.single('gambar'), function (req, res, next) {
-    console.log(req.body)
-    const { kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, gambar, deskripsi, provinsi, kota, alamat } = req.body;
+  router.post('/ads', function (req, res, next) {
+    const { kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, deskripsi, provinsi, kota, alamat, lat, lng } = req.body;
 
-    pool.query(`INSERT INTO public.iklan (kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, gambar, deskripsi, provinsi, kota, alamat, iduser)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`, [kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, gambar, deskripsi, provinsi, kota, alamat, req.session.user.iduser], err => {
-      if (err) throw err; 
-      
+    pool.query(`INSERT INTO public.iklan (kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, gambar, deskripsi, provinsi, kota, alamat, lat, lng, iduser)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)`, [kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, req.files.image.name, deskripsi, provinsi, kota, alamat, lat, lng, req.session.user.iduser], err => {
+      if (err) throw err;
+      console.log(req.files.image.name);
       req.flash('info', "Yeay, your ads has been added!");
       res.redirect('/ads')
     });
+
+    // let image = req.files.image.name;
+  
+    // image.mv('./uploads/' + image, function (err) {
+    //   if (err) {
+    //     console.log(err);
+    //   } else {
+    //     alert('File uploaded!');
+    //   }
+    // })
   });
 
   // list ads
@@ -203,8 +320,8 @@ module.exports = function (pool) {
     const { kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, gambar, deskripsi, provinsi, kota, alamat } = req.body;
 
     pool.query('UPDATE public.iklan SET kategori = $1, judul = $2, luastanah = $3, luasbangunan = $4, kamartidur = $5, kamarmandi = $6, lantai = $7, fasilitas = $8, carport = $9, sertifikasi = $10, harga = $11, gambar = $12, deskripsi = $13, provinsi = $14, kota = $15, alamat = $16 WHERE idiklan = $17)', [kategori, judul, luastanah, luasbangunan, kamartidur, kamarmandi, lantai, fasilitas, carport, sertifikasi, harga, gambar, deskripsi, provinsi, kota, alamat, req.params.id], (err) => {
-      if (err) throw err; 
-      
+      if (err) throw err;
+
       req.flash('info', "Yeay, your ads has been updated!");
       res.redirect('/editads');
     });

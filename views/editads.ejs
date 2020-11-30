@@ -110,11 +110,11 @@
             </div>
             <h4 style="margin-top: 30px; font-weight: bold;">Kategori</h4>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="kategori" id="jual" value="<%= data.kategori %>">
+                <input class="form-check-input" type="radio" name="kategori" id="jual" value="jual" <%= data.kategori == 'jual' ? 'checked' : '' %>>
                 <label class="form-check-label" for="inlineRadio1">Jual</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="kategori" id="sewa" value="<%= data.kategori %>">
+                <input class="form-check-input" type="radio" name="kategori" id="sewa" value="sewa" <%= data.kategori == 'sewa' ? 'checked' : '' %>>
                 <label class="form-check-label" for="inlineRadio2">Sewa</label>
             </div>
             <h4 style="margin-top: 30px; font-weight: bold;">Detail Iklan</h4>

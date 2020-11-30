@@ -36,29 +36,29 @@
     </style>
 
     <!-- Make a chained dropdown list -->
-  <script>
-    function filter() {
-      let provinsi = document.getElementById('provinsi').value;
-      let list = [];
+    <script>
+        function filter() {
+            let provinsi = document.getElementById('provinsi').value;
+            let list = [];
 
-      if (provinsi == "Jawa Barat") {
-        list.push("Bandung", "Bogor", "Bekasi", "Garut", "Tasikmalaya");
-      } else if (provinsi == "Jawa Tengah") {
-        list.push("Yogyakarta", "Surakarta", "Semarang", "Tegal", "Sragen")
-      } else if (provinsi == "Jawa Timur") {
-        list.push("Surabaya", "Malang", "Kediri", "Madiun", "Lamongan")
-      } else {
-        let list = [];
-      }
+            if (provinsi == "Jawa Barat") {
+                list.push("Bandung", "Bogor", "Bekasi", "Garut", "Tasikmalaya");
+            } else if (provinsi == "Jawa Tengah") {
+                list.push("Yogyakarta", "Surakarta", "Semarang", "Tegal", "Sragen")
+            } else if (provinsi == "Jawa Timur") {
+                list.push("Surabaya", "Malang", "Kediri", "Madiun", "Lamongan")
+            } else {
+                let list = [];
+            }
 
-      let kota = "";
-      for (let i = 0; i < list.length; i++) {
-        kota += "<option>" + list[i] + "</option>"
-      }
+            let kota = "";
+            for (let i = 0; i < list.length; i++) {
+                kota += "<option>" + list[i] + "</option>"
+            }
 
-      document.getElementById('kota').innerHTML = kota;
-    }
-  </script>
+            document.getElementById('kota').innerHTML = kota;
+        }
+    </script>
 </head>
 
 <body>
@@ -79,7 +79,7 @@
     -->
 
     <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClvGFVxCfij8CvcYOdhEQzUQjEqjRvfX0&libraries=places"></script>
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClvGFVxCfij8CvcYOdhEQzUQjEqjRvfX0&libraries=places"></script>
 
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
@@ -184,22 +184,8 @@
             </div>
             <div class="form-group">
                 <label for="exampleFormControlFile1">Pilih Gambar</label>
-                <input type="file" class="form-control-file" name="gambar" onchange="preview(event)">
-                <img src="/images/home.png" id="image" style="widht: 100px; height: 100px; margin-top: 20px">
-            </div>
-            <script>
-                function preview(event) {
-                    let input = event.target.files[0];
-                    let reader = new FileReader();
-
-                    reader.onload = function () {
-                        let result = reader.result;
-                        let image = document.getElementById('image');
-                        image.src = result;
-                    }
-                    reader.readAsDataURL(input);
-                }
-            </script>
+                <input type="file" class="form-control-file" name="image"/>
+                <input type="submit" style="margin-top: 5px;" value="Upload"/>
             <div class="form-group">
                 <label for="deskripsi" style="margin-top: 10px;">Deskripsi</label>
                 <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="deskripsi"
@@ -233,7 +219,7 @@
             <!-- Set up Google Maps Javascript and Places API -->
             <div id="map"></div>
             <script>
-                // Google Maps Script API                let map;
+                let map;
                 // Show the map, center point Indonesia
                 map = new google.maps.Map(document.getElementById('map'), {
                     center: {
@@ -241,55 +227,54 @@
                         lng: 124.09884761182217
                     },
                     zoom: 4.5
-                });                // Make search input connected with the map
-                let input = document.getElementById('search');
-                let searchBox = new google.maps.places.SearchBox(input); map.controls[google.maps.ControlPosition.TOP_LEFT].push(input); map.addListener('bounds_changed', function () {
-                    searchBox.setBounds(map.getBounds());
-                }); let markers = [];                // Activate details from the location we choose
-                searchBox.addListener('places_changed', function () {
-                    var places = searchBox.getPlaces(); if (places.length == 0) {
-                        return;
-                    }                    // Reset marker
-                    markers.forEach(function (marker) {
-                        marker.setMap(null);
-                    });
-                    markers = []; let bounds = new google.maps.LatLngBounds();
-                    places.forEach(function (place) {
-                        if (!place.geometry) {
-                            console.log("Returned place contains no geometry");
-                            return;
-                        }
-                        var icon = {
-                            url: place.icon,
-                            size: new google.maps.Size(71, 71),
-                            origin: new google.maps.Point(0, 0),
-                            anchor: new google.maps.Point(17, 34),
-                            scaledSize: new google.maps.Size(25, 25)
-                        }; markers.push(new google.maps.Marker({
-                            map: map,
-                            icon: icon,
-                            title: place.name,
-                            position: place.geometry.location
-                        })); if (place.geometry.viewport) {
-                            bounds.union(place.geometry.viewport);
-                        } else {
-                            bounds.extend(place.geometry.location);
-                        }
-                    });
-                    map.fitBounds(bounds);
+                });
+
+                let marker;
+                function makeMarker(map, point) {
+                    if (marker) {
+                        marker.setPosition(point)
+                    } else {
+                        marker = new google.maps.Marker({
+                            position: point,
+                            map: map
+                        });
+                    }
+
+                    // isi nilai koordinat ke form
+                    document.getElementById("lat").value = point.lat();
+                    document.getElementById("lng").value = point.lng();
+                }
+
+                // even listener ketika peta diklik
+                google.maps.event.addListener(map, 'click', function (event) {
+                    makeMarker(this, event.latLng);
                 });
             </script>
+            <div class="form-group row" style="margin-top: 15px;">
+                <label for="nama" class="col-sm-2 col-form-label">Lattitude</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="lat" name="lat">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="nama" class="col-sm-2 col-form-label">Longitude</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="lng" name="lng">
+                </div>
+            </div>
             <h4 style="margin-top: 30px; font-weight: bold;">Detail Penjual</h4>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">ID Penjual</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="idpenjual" name="idpenjual" value="<%= user.iduser %>">
+                    <input disabled type="text" class="form-control" id="idpenjual" name="idpenjual"
+                        value="<%= user.iduser %>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="nama" class="col-sm-2 col-form-label">Nama Penjual</label>
                 <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="penjual" name="penjual" value="<%= user.nama %>">
+                    <input disabled type="text" class="form-control" id="penjual" name="penjual"
+                        value="<%= user.nama %>">
                 </div>
             </div>
             <div class="form-group row">

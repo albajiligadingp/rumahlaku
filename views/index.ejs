@@ -86,7 +86,7 @@
 
       let kota = "";
       for (let i = 0; i < list.length; i++) {
-        kota += "<option>" + list[i] + "</option>"
+        kota += "<option value=" + list[i] + " <%= query.kota == " + list[i] + " ? 'selected' : '' %>>" + list[i] + "</option>"
       }
 
       document.getElementById('kota').innerHTML = kota;
@@ -121,7 +121,7 @@
             </div>
           </li>
           <li class="nav-item">
-            <a href="/ads" class="btn btn-warning ml-2 text-light" type="submit">Create</a>
+            <a href="/ads" class="btn btn-warning ml-2 text-dark" type="submit">Create</a>
           </li>
         </ul>
       </div>
@@ -139,77 +139,43 @@
 
   <div class="container-fluid">
     <h3 style="text-align: left; margin-bottom: 20px;">Welcome, <%= user.nama%>!</h3>
-    <input id="search" class="form-control" type="text" placeholder="Enter your city here..." aria-label="Search">
     <!-- Set up Google Maps Javascript and Places API -->
     <div id="map"></div>
     <script>
-      // Google Maps Script API
+      let lat = document.getElementById("lat").value;
+      let lng = document.getElementById("lng").value;
+      let judul = document.getElementById("judul").value;
+
+      let options = {
+        center: new google.maps.LatLng(lat, lng),
+        zoom: 4.5,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
 
       let map;
-      // Show the map, center point Indonesia
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: {
-          lat: -1.334465038429288,
-          lng: 124.09884761182217
-        },
-        zoom: 4.5
-      });
+      map = new google.maps.Map(document.getElementById('map'), options);
 
-      // Make search input connected with the map
-      let input = document.getElementById('search');
-      let searchBox = new google.maps.places.SearchBox(input);
+      let locations = [];
+      let infowindow = new google.maps.InfoWindow();
 
-      map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+      for (let i = 0; i < data.rows.length; i++) {
+        locations.push([judul, lat, lng]);
+      }
 
-      map.addListener('bounds_changed', function () {
-        searchBox.setBounds(map.getBounds());
-      });
-
-      let markers = [];
-
-      // Activate details from the location we choose
-      searchBox.addListener('places_changed', function () {
-        var places = searchBox.getPlaces();
-
-        if (places.length == 0) {
-          return;
-        }
-
-        // Reset marker
-        markers.forEach(function (marker) {
-          marker.setMap(null);
+      for (let j = 0; j < locations.length; j++) {
+        let marker = new google.maps.Marker({
+          position: new google.maps.LatLng(locations[j][1], locations[j][2]),
+          map: map,
+          animation: google.maps.Animation.BOUNCE,
         });
-        markers = [];
 
-        let bounds = new google.maps.LatLngBounds();
-        places.forEach(function (place) {
-          if (!place.geometry) {
-            console.log("Returned place contains no geometry");
-            return;
+        google.maps.event.addListener(marker, 'click', (function (marker) {
+          return function () {
+            infowindow.setContent(locations[i][0]);
+            infowindow.open(map, marker);
           }
-          var icon = {
-            url: place.icon,
-            size: new google.maps.Size(71, 71),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(17, 34),
-            scaledSize: new google.maps.Size(25, 25)
-          };
-
-          markers.push(new google.maps.Marker({
-            map: map,
-            icon: icon,
-            title: place.name,
-            position: place.geometry.location
-          }));
-
-          if (place.geometry.viewport) {
-            bounds.union(place.geometry.viewport);
-          } else {
-            bounds.extend(place.geometry.location);
-          }
-        });
-        map.fitBounds(bounds);
-      });
+        }));
+      }
     </script>
   </div>
 
@@ -218,49 +184,52 @@
       <div class="col-sm-3">
         <h3 style="margin-left: 30px; margin-top: 40px">Filter</h3>
         <nav class="nav flex-column" style="margin-left: 30px; margin-top: 20px">
-          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#kategori"
-            aria-expanded="false" aria-controls="collapseExample" style="margin-top: 5px">
-            Filter by category
-          </button>
-          <div class="collapse" id="kategori">
-            <div class="card card-body">
-              <select class="custom-select">
-                <option disabled selected>Pilih Kategori</option>
-                <option value="jual">Jual</option>
-                <option value="sewa">Sewa</option>
+          <form action="/" method="GET">
+            <div class="form-group">
+              <label for="kategori">Kategori</label>
+              <select class="form-control" name="kategori" id="kategori">
+                <option <%= !query.kategori ? 'selected' : ''%>>Pilih Kategori
+                </option>
+                <option value="jual" <%= query.kategori == 'jual' ? 'selected' : '' %>>Jual
+                </option>
+                <option value="sewa" <%= query.kategori == 'sewa' ? 'selected' : '' %>>Sewa
+                </option>
               </select>
             </div>
-          </div>
-          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#lokasi"
-            aria-expanded="false" aria-controls="collapseExample" style="margin-top: 30px">
-            Filter by location
-          </button>
-          <div class="collapse" id="lokasi">
-            <div class="card card-body">
-              <select class="custom-select" id="provinsi" onchange="filter()">
-                <option disabled selected>Pilih Provinsi</option>
-                <option value="Jawa Barat">Jawa Barat</option>
-                <option value="Jawa Tengah">Jawa Tengah</option>
-                <option value="Jawa Timur">Jawa Timur</option>
-              </select>
-              <select class="custom-select" id="kota" style="margin-top: 20px">
-                <option disabled selected>Pilih Kota</option>
+            <div class="form-group">
+              <label for="lokasi" style="margin-top: 20px">Lokasi</label>
+              <select class="form-control" id="provinsi" onchange="filter()" name="provinsi">
+                <option <%= !query.provinsi ? 'selected' : ''%>>Pilih Provinsi
+                </option>
+                <option value="Jawa Barat" <%= query.provinsi == 'Jawa Barat' ? 'selected' : '' %>>Jawa Barat
+                </option>
+                <option value="Jawa Tengah" <%= query.provinsi == 'Jawa Tengah' ? 'selected' : '' %>>Jawa Tengah
+                </option>
+                <option value="Jawa Timur" <%= query.provinsi == 'Jawa Timur' ? 'selected' : '' %>>Jawa Timur
+                </option>
               </select>
             </div>
-          </div>
-          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#harga"
-            aria-expanded="false" aria-controls="collapseExample" style="margin-top: 30px">
-            Filter by price
-          </button>
-          <div class="collapse" id="harga">
-            <div class="card card-body">
-              <select class="custom-select">
-                <option disabled selected>Urutkan Harga</option>
-                <option value="asc">Tertinggi - Terendah</option>
-                <option value="desc">Terendah - Tertinggi</option>
+            <div class="form-group">
+              <select class="form-control" id="kota" style="margin-top: 20px" name="kota">
+                <option <%= !query.kota ? 'selected' : ''%>>Pilih Kota
+                </option>
               </select>
             </div>
-          </div>
+            <div class="form-group">
+              <label for="lokasi" style="margin-top: 20px">Harga</label>
+              <select class="form-control" name="harga" id="harga">
+                <option <%= !query.harga ? 'selected' : ''%>>Urutkan Harga
+                </option>
+                <option value="asc" <%= query.harga == 'asc' ? 'selected' : '' %>>ASC (Tertinggi - Terendah)
+                </option>
+                <option value="desc" <%= query.harga == 'desc' ? 'selected' : '' %>>DESC (Terendah - Tertinggi)
+                </option>
+              </select>
+            </div>
+          </form>
+          <button class="btn btn-warning" type="submit" style="margin-top: 30px">
+            Filter
+          </button>
         </nav>
         <div id="droppable" class="ui-widget-header" style="margin-top: 50px; margin-left: 30px">
           <p>Area to Compare</p>
@@ -270,24 +239,65 @@
         <div class="row">
           <% data.forEach(data => { %>
           <div class="draggable" style="width: 18rem; margin-top: 40px; margin-left: 50px">
-            <img src=/<%= data.gambar %> class="card-img-top" alt="">
+            <img src=/images/rumah1.jpg class="card-img-top" alt="">
             <div class="card-body" style="width: 300px; height: 150px;">
-              <h5 class="card-title"><%= data.judul %></h5>
-              <p class="card-text"><%= data.harga %></p>
+              <h5 class="card-title" id="judul"><%= data.judul %></h5>
+              <p class="card-text" id="harga"><%= data.harga %></p>
+              <input disabled type="text" class="form-control" id="lat" name="lat" value="<%= data.lat %>">
+              <input disabled type="text" class="form-control" id="lng" name="lng" value="<%= data.lng %>">
               <a href="/details/<%= data.idiklan %>" class="btn btn-primary">View Details</a>
             </div>
           </div>
           <% }) %>
         </div>
       </div>
-      <nav aria-label="Page navigation example" style="margin-top: 40px; margin-left: 770px">
+      <nav style="margin-left: 770px">
+        <% if (pages > 0) { %>
         <ul class="pagination">
-          <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          <% if (current == 1) { %>
+          <li class="page-item disabled">
+            <a class="page-link">First</a>
+          </li>
+          <% } else { %>
+          <li class="page-item">
+            <a class="page-link" href="<%= url.replace(url, `?page=1&${url}`) %>">First</a>
+          </li>
+          <% } %>
+          <% let i = (Number(current) > 3 ? Number(current) - 2 : 1) %>
+          <% if (i !== 1) { %>
+          <li class="page-item disabled">
+            <a>...</a>
+          </li>
+          <% } %>
+          <% for (; i <= (Number(current) + 2) && i <= pages; i++) { %>
+          <% if (i == current) { %>
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="<%= url.replace(url, `?page=${i}&${url}`) %>" name="page"><%= i %><span
+                class="sr-only">(current)</span></a>
+          </li>
+          <% } else { %>
+          <li class="page-item" aria-current="page">
+            <a class="page-link" href="<%= url.replace(url, `?page=${i}&${url}`) %>" name="page"><%= i %><span
+                class="sr-only">(current)</span></a>
+          </li>
+          <% } %>
+          <% } %>
+          <% if (i == Number(current) + 3 && i < pages) { %>
+          <li class="page-item disabled">
+            <a>...</a>
+          </li>
+          <% } %>
+          <% if (current == pages) { %>
+          <li class="page-item disabled">
+            <a class="page-link">Last</a>
+          </li>
+          <% } else { %>
+          <li class="page-item">
+            <a class="page-link" href="<%= url.replace(url, `?page=${pages}&${url}`) %>">Last</a>
+          </li>
+          <% } %>
         </ul>
+        <% } %>
       </nav>
       <footer class="container">
         <p style="margin-top: 50px; text-align: center;">© Batch 23 Rubicamp 2020</p>

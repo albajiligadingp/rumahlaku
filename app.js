@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const session = require('express-session');
 const flash = require('connect-flash');
+const upload = require('express-fileupload');
 
 // connect to postgresql
 const { Pool } = require('pg')
@@ -37,6 +38,7 @@ app.use(session({
   secret: 'rubicamp',
 }))
 app.use(flash());
+app.use(upload());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
