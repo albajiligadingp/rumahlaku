@@ -43,8 +43,8 @@ module.exports = function (pool) {
       field.push('harga');
     }
 
-    console.log(req.query.kategori)
-    console.log(field)
+    // console.log(req.query.kategori)
+    // console.log(field)
 
     let sql = `SELECT count(*) FROM public.iklan`;
 
@@ -116,18 +116,20 @@ module.exports = function (pool) {
       }
 
       sql += ` LIMIT ${perPage} OFFSET ${offset}`;
+      console.log(sql);
 
-      pool.query(sql, (err, rows) => {
+      pool.query(sql, (err, data) => {
         if (err) console.log(err);
 
         res.render('index', {
-          data: rows.rows,
+          data: data.rows,
           query: queries,
           current: page,
           pages,
           url,
           user: req.session.user
         });
+        console.log(data.rows.length);
       });
     });
   });
@@ -285,16 +287,6 @@ module.exports = function (pool) {
       req.flash('info', "Yeay, your ads has been added!");
       res.redirect('/ads')
     });
-
-    // let image = req.files.image.name;
-  
-    // image.mv('./uploads/' + image, function (err) {
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     alert('File uploaded!');
-    //   }
-    // })
   });
 
   // list ads
@@ -360,5 +352,28 @@ module.exports = function (pool) {
       res.render('compare', {data: data.rows});
     }) 
   })
+
+  // upload images
+  router.get('/upload', function(req, res) {
+    res.render('upload');
+  })
+
+  router.post('/upload', function(req, res) {
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).send('No files were uploaded.');
+    }
+  
+    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+    let gambar1 = req.files.gambar1;
+  
+    // Use the mv() method to place the file somewhere on your server
+    gambar1.mv('/home/albajiligadingp/Documents/Rubicamp/Coding/rumahlaku/public/uploads/gambar1.jpg', function(err) {
+      if (err)
+        return res.status(500).send(err);
+  
+      res.send('File uploaded!');
+    });
+  });
+
   return router;
 }

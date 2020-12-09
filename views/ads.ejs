@@ -1,3 +1,7 @@
+<script>
+    const { Pool } = require('pg')
+</script>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -184,111 +188,122 @@
             </div>
             <div class="form-group">
                 <label for="exampleFormControlFile1">Pilih Gambar</label>
-                <input type="file" class="form-control-file" name="image"/>
-            <div class="form-group">
-                <label for="deskripsi" style="margin-top: 10px;">Deskripsi</label>
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="deskripsi"
-                    placeholder="Deskripsi"></textarea>
-            </div>
-            <h4 style="margin-top: 30px; font-weight: bold;">Lokasi</h4>
-            <div class="form-group row">
-                <label for="nama" class="col-sm-2 col-form-label">Provinsi</label>
-                <div class="col-sm-10">
-                    <select class="form-control" id="provinsi" name="provinsi" onchange="filter()">
-                        <option disabled selected>Pilih Provinsi</option>
-                        <option value="Jawa Barat">Jawa Barat</option>
-                        <option value="Jawa Tengah">Jawa Tengah</option>
-                        <option value="Jawa Timur">Jawa Timur</option>
-                    </select>
+                <!-- <input type="file" class="form-control-file" name="image"/> -->
+                <a href="/upload" class="btn btn-primary">Upload</a>
+                <div class="form-group">
+                    <label for="deskripsi" style="margin-top: 10px;">Deskripsi</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="deskripsi"
+                        placeholder="Deskripsi"></textarea>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label for="nama" class="col-sm-2 col-form-label">Kota</label>
-                <div class="col-sm-10">
-                    <select class="form-control" id="kota" name="kota">
-                        <option disabled selected placeholder="Pilih Kota">Pilih Kota</option>
-                    </select>
+                <h4 style="margin-top: 30px; font-weight: bold;">Lokasi</h4>
+                <div class="form-group row">
+                    <label for="nama" class="col-sm-2 col-form-label">Provinsi</label>
+                    <div class="col-sm-10">
+                        <script>
+                            const pool = new Pool({
+                                user: 'postgres',
+                                host: 'localhost',
+                                database: 'rumahlakudb',
+                                password: 'gading313',
+                                port: 5432,
+                            })
+                            pool.query('SELECT namaprovinsi FROM public.provinsi');
+                        </script>
+                        <select class="form-control" id="provinsi" name="provinsi">
+                            <option disabled selected>Pilih Provinsi</option>
+                            <% while(`namaprovinsi = `%>
+                            <option value="<%= namaprovinsi %>"></option>
+                            <%  var row_provinsi = id%>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="alamatlengkap" style="margin-top: 10px;">Alamat Lengkap</label>
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="alamat"
-                    placeholder="Alamat lengkap"></textarea>
-            </div>
-            <!-- Set up Google Maps Javascript and Places API -->
-            <div id="map"></div>
-            <script>
-                let map;
-                // Show the map, center point Indonesia
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: {
-                        lat: -1.334465038429288,
-                        lng: 124.09884761182217
-                    },
-                    zoom: 4.5
-                });
+                <div class="form-group row">
+                    <label for="nama" class="col-sm-2 col-form-label">Kota</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="kota" name="kota">
+                            <option disabled selected placeholder="Pilih Kota">Pilih Kota</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="alamatlengkap" style="margin-top: 10px;">Alamat Lengkap</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="alamat"
+                        placeholder="Alamat lengkap"></textarea>
+                </div>
+                <!-- Set up Google Maps Javascript and Places API -->
+                <div id="map"></div>
+                <script>
+                    let map;
+                    // Show the map, center point Indonesia
+                    map = new google.maps.Map(document.getElementById('map'), {
+                        center: {
+                            lat: -1.334465038429288,
+                            lng: 124.09884761182217
+                        },
+                        zoom: 4.5
+                    });
 
-                let marker;
-                function makeMarker(map, point) {
-                    if (marker) {
-                        marker.setPosition(point)
-                    } else {
-                        marker = new google.maps.Marker({
-                            position: point,
-                            map: map
-                        });
+                    let marker;
+                    function makeMarker(map, point) {
+                        if (marker) {
+                            marker.setPosition(point)
+                        } else {
+                            marker = new google.maps.Marker({
+                                position: point,
+                                map: map
+                            });
+                        }
+
+                        // isi nilai koordinat ke form
+                        document.getElementById("lat").value = point.lat();
+                        document.getElementById("lng").value = point.lng();
                     }
 
-                    // isi nilai koordinat ke form
-                    document.getElementById("lat").value = point.lat();
-                    document.getElementById("lng").value = point.lng();
-                }
-
-                // even listener ketika peta diklik
-                google.maps.event.addListener(map, 'click', function (event) {
-                    makeMarker(this, event.latLng);
-                });
-            </script>
-            <div class="form-group row" style="margin-top: 15px;">
-                <label for="nama" class="col-sm-2 col-form-label">Lattitude</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="lat" name="lat">
+                    // even listener ketika peta diklik
+                    google.maps.event.addListener(map, 'click', function (event) {
+                        makeMarker(this, event.latLng);
+                    });
+                </script>
+                <div class="form-group row" style="margin-top: 15px;">
+                    <label for="nama" class="col-sm-2 col-form-label">Lattitude</label>
+                    <div class="col-sm-10">
+                        <input type="hidden" class="form-control" id="lat" name="lat">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label for="nama" class="col-sm-2 col-form-label">Longitude</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="lng" name="lng">
+                <div class="form-group row">
+                    <label for="nama" class="col-sm-2 col-form-label">Longitude</label>
+                    <div class="col-sm-10">
+                        <input type="hidden" class="form-control" id="lng" name="lng">
+                    </div>
                 </div>
-            </div>
-            <h4 style="margin-top: 30px; font-weight: bold;">Detail Penjual</h4>
-            <div class="form-group row">
-                <label for="nama" class="col-sm-2 col-form-label">ID Penjual</label>
-                <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="idpenjual" name="idpenjual"
-                        value="<%= user.iduser %>">
+                <h4 style="margin-top: 30px; font-weight: bold;">Detail Penjual</h4>
+                <div class="form-group row">
+                    <label for="nama" class="col-sm-2 col-form-label">ID Penjual</label>
+                    <div class="col-sm-10">
+                        <input disabled type="text" class="form-control" id="idpenjual" name="idpenjual"
+                            value="<%= user.iduser %>">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label for="nama" class="col-sm-2 col-form-label">Nama Penjual</label>
-                <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="penjual" name="penjual"
-                        value="<%= user.nama %>">
+                <div class="form-group row">
+                    <label for="nama" class="col-sm-2 col-form-label">Nama Penjual</label>
+                    <div class="col-sm-10">
+                        <input disabled type="text" class="form-control" id="penjual" name="penjual"
+                            value="<%= user.nama %>">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label for="nama" class="col-sm-2 col-form-label">No Handphone</label>
-                <div class="col-sm-10">
-                    <input disabled type="text" class="form-control" id="nohppenjual" name="nohppenjual"
-                        value="<%= user.nohandphone %>">
+                <div class="form-group row">
+                    <label for="nama" class="col-sm-2 col-form-label">No Handphone</label>
+                    <div class="col-sm-10">
+                        <input disabled type="text" class="form-control" id="nohppenjual" name="nohppenjual"
+                            value="<%= user.nohandphone %>">
+                    </div>
                 </div>
-            </div>
-            <button class="btn btn-lg btn-success btn-block" type="submit">Buat Iklan</button>
-            <% if (info.length > 0) { %>
-            <div class="alert alert-success" role="alert">
-                <%= info %>
-            </div>
-            <% } %>
+                <button class="btn btn-lg btn-success btn-block" type="submit">Buat Iklan</button>
+                <% if (info.length > 0) { %>
+                <div class="alert alert-success" role="alert">
+                    <%= info %>
+                </div>
+                <% } %>
         </form>
     </div>
     <footer class="container">

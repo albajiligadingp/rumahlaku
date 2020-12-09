@@ -59,7 +59,6 @@
           "ui-droppable-hover": "ui-state-hover"
         },
         drop: function (event, ui) {
-          console.log(event, ui)
           $(this)
             .addClass("ui-state-highlight")
             .find("p")
@@ -69,14 +68,11 @@
           let idselecteds = $('#comparebutton').attr('href').split('=')[1]
 
           let a = decodeURIComponent(idselecteds)
-          console.log(typeof a);
 
           let b = JSON.parse(a)
           b.push(selectedid);
-          console.log(b);
 
           let c = JSON.stringify(b)
-          console.log(c);
 
           $('#comparebutton').attr('href', "/compare?selectedids=" + decodeURIComponent(c))
         }
@@ -157,43 +153,6 @@
     <h3 style="text-align: left; margin-bottom: 20px;">Welcome, <%= user.nama%>!</h3>
     <!-- Set up Google Maps Javascript and Places API -->
     <div id="map"></div>
-    <script>
-      let lat = document.getElementById("lat").value;
-      console.log(lat)
-      let lng = document.getElementById("lng").value;
-      let judul = document.getElementById("judul").value;
-
-      let options = {
-        center: new google.maps.LatLng(lat, lng),
-        zoom: 4.5,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-
-      let map;
-      map = new google.maps.Map(document.getElementById('map'), options);
-
-      let locations = [];
-      let infowindow = new google.maps.InfoWindow();
-
-      for (let i = 0; i < data.rows.length; i++) {
-        locations.push([judul, lat, lng]);
-      }
-
-      for (let j = 0; j < locations.length; j++) {
-        let marker = new google.maps.Marker({
-          position: new google.maps.LatLng(locations[j][1], locations[j][2]),
-          map: map,
-          animation: google.maps.Animation.BOUNCE,
-        });
-
-        google.maps.event.addListener(marker, 'click', (function (marker) {
-          return function () {
-            infowindow.setContent(locations[i][0]);
-            infowindow.open(map, marker);
-          }
-        }));
-      }
-    </script>
   </div>
 
   <div class="container-fluid">
@@ -248,11 +207,16 @@
             Filter
           </button>
         </nav>
-          <div id="droppable" class="ui-widget-header" style="margin-top: 50px; margin-left: 30px">
-            <p>Area to Compare</p>
-          </div>
-          <a href="/compare?selectedids=[]" id="comparebutton">Compare</a>
+        <div id="droppable" class="ui-widget-header" style="margin-top: 50px; margin-left: 30px">
+          <p>Area to Compare</p>
         </div>
+        <a href="/compare?selectedids=[]" id="comparebutton">
+          <button type="button" class="btn btn-success"
+            style="text-align: center; margin-top: 10px; margin-left: 130px">
+            Compare
+          </button>
+        </a>
+      </div>
       <div class="col-sm-9">
         <div class="row">
           <% data.forEach(data => { %>
@@ -321,6 +285,32 @@
         <p style="margin-top: 50px; text-align: center;">© Batch 23 Rubicamp 2020</p>
       </footer>
     </div>
+    <script>
+      let map;
+      // Show the map, center point Indonesia
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {
+          lat: -1.334465038429288,
+          lng: 124.09884761182217
+        },
+        zoom: 4.5,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      }
+      );
+
+      let locations = [
+      <% data.forEach(data => { %>
+        {lat: <%= data.lat %>, lng: <%= data.lng %>},
+      <% }) %>
+      ];
+
+      for (let i = 0; i < locations.length; i++) {
+        let marker = new google.maps.Marker({
+          position: new google.maps.LatLng(locations[i].lat, locations[i].lng),
+          map: map,
+        });
+      }
+    </script>
 </body>
 
 </html>
